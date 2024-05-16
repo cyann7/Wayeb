@@ -12,6 +12,7 @@ import ui.ConfigUtils
 
 object SDFAInterface {
   /**
+    * symbolic deterministic finite automaton (SDFA)
     * Constructor for SDFA interface with default id (1) and partition attribute (none).
     *
     * @param sdfa The symbolic deterministic finite automaton (SDFA) to wrap.

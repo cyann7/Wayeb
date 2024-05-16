@@ -15,16 +15,22 @@ object MaritimeLineParser extends LineParser with LazyLogging {
       val mmsi = line(1).toString
       val lon = line(2).toDouble
       val lat = line(3).toDouble
-      val speed = line(4).toDouble
-      val heading = line(5).toDouble
-      val cog = line(6).toDouble
-      val annotation = line(7)
-      val nextCETimestamp = if (line.size > 8) line(8).toLong else -1
+//      val speed = line(4).toDouble
+//      val heading = line(5).toDouble
+//      val cog = line(6).toDouble
+//      val annotation = line(7)
+//      val annotation = line(4)
+      val speed = line(5).toDouble
+      val heading = line(6).toDouble
+//      val cog = line(6).toDouble
+
+//      val nextCETimestamp = if (line.size > 8) line(8).toLong else -1
       if (timestamp == -1) ResetEvent(Map("mmsi" -> mmsi))
       else {
         val ge = GenericEvent(id, "SampledCritical", timestamp,
           Map("mmsi" -> mmsi, "speed" -> speed, "lon" -> lon, "lat" -> lat, "heading" -> heading,
-            "cog" -> cog, "annotation" -> annotation, "nextCETimestamp" -> nextCETimestamp))
+//            "cog" -> cog, "annotation" -> annotation, "nextCETimestamp" -> nextCETimestamp
+          ))
         ge
       }
     } catch {

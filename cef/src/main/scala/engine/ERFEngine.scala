@@ -201,7 +201,9 @@ class ERFEngine private (
     val currentTimestamp = event.timestamp
     // All FSMs process the event.
     //logger.debug("PROCESSING " + event.toString)
+//    遍历了 FSM 列表 fsmList，对每个 FSM 调用了 processEvent 方法进行事件处理，并将结果保存在 det 变量中。
     val det = fsmList.map(f => processEvent(event, f))
+//    processEvent 方法并未直接进行事件检测的操作，而是对每个 FSM 调用了 processEvent 方法
     if (totalStreamSize > warmupStreamSize) {
       effectiveStreamSize += 1
       matchesNo += det.map(d => d._1).sum
@@ -242,6 +244,7 @@ class ERFEngine private (
 
   /**
     * Processing of a single event by a single FSM.
+   *  一个 FSM 对 一个 event的处理
     *
     * @param event The event to be processed.
     * @param thisFsm The FSM to process the event.

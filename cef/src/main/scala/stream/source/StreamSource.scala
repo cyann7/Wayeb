@@ -49,6 +49,7 @@ abstract class StreamSource {
 
   /**
     * Sends a new event to all registered listeners.
+    * 遍历 listeners 的值（即所有监听器），并调用每个监听器的 newEventEmitted 方法来处理新事件。
     *
     * @param event The new event.
     */

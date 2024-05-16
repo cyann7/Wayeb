@@ -201,12 +201,12 @@ trait SREParser extends JavaTokenParsers {
       case _ => throw new IllegalArgumentException("windowType must be count or time")
     }
   }
-
+  //解析不带有 & 的单个pattern
   def formulaWithWindowType: Parser[(SREFormula, Int, String, Int, String)] = formulaWithWindow ~ opt(windowType) ^^ {
     case (f, o, p, w) ~ Some(wt) => (f, o, p, w, wt)
     case (f, o, p, w) ~ None => (f, o, p, w, "count")
   }
-
+//解析带有 & 的全部
   def formulasList: Parser[List[(SREFormula, Int, String, Int, String)]] = repsep(formulaWithWindowType, "&") ^^ {
     case fl => fl
   }
@@ -274,9 +274,20 @@ trait SREParser extends JavaTokenParsers {
 object ParseSREFormula$ extends SREParser {
   def main(args: Array[String]): Unit = {
     val home = System.getenv("WAYEB_HOME")
-    val fn = home + "/patterns/validation/pattern2.sre"
+    val fn = home + "/patterns/maritime/port/allenRelWithSRE.sre"
     val reader = new FileReader(fn)
-    val parsed = parseAll(formulasList, reader)
+    val ffff=formulasList
+    val parsed = parseAll(ffff, reader)
+    parsed match {
+      case Success(result, _) =>
+        val f = result
+        println(parsed)
+        println(f)
+      case NoSuccess(msg, next) =>
+        println(s"Parsing failed: $msg")
+        println(s"At line ${next.pos.line}, column ${next.pos.column}")
+        println(next.pos.longString)
+    }
     val f = parsed.get
     println(parsed)
     println(f)

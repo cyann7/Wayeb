@@ -17,6 +17,7 @@ object SREUtils extends SREParser with DeclarationsParser with LazyLogging {
     * @param fn The file with the patterns
     * @return a list of Tuple3 where each Tuple3 contains the formula, its order and its partition attribute.
     */
+    // 解析SRE为formula
   def parseSRE(fn: String): List[(SREFormula, Int, String, Int, String)] = {
     val reader = new FileReader(fn)
     val parsed = parseAll(formulasList, reader)
@@ -82,8 +83,10 @@ object SREUtils extends SREParser with DeclarationsParser with LazyLogging {
                     withSelection: Boolean
                   ): (List[(SREFormula, Int, String, Int, String)], Set[Set[Predicate]], Set[Sentence]) = {
     logger.info("Parsing formulas from " + patternsFile)
+    // 调用 SREUtils 对象的 parseSRE 方法，解析模式文件并将结果存储在 formulas 中
     val formulas = SREUtils.parseSRE(patternsFile)
     logger.debug("Parsed formulas: " + formulas.toString)
+    // 接下来，根据声明文件的存在与否，解析声明文件并分别处理独占和额外部分。如果没有声明文件，则将独占和额外设置为空集合。
     val (exclusives, extras) = if (declarationsFile == "") (Set.empty[Set[Predicate]], Set.empty[Sentence]) else {
       logger.info("Parsing declarations from " + declarationsFile)
       val d = SREUtils.parseDeclarations(declarationsFile)
@@ -93,6 +96,9 @@ object SREUtils extends SREParser with DeclarationsParser with LazyLogging {
       (exc, ext)
     }
     logger.debug("Checking for selection strategies")
+    // 根据 withSelection 参数决定是否应用选择策略。如果需要应用选择策略，则对公式列表中的每个元素应用 transformFormulaWithSelection 方法，
+    // 否则应用 transformFormulaNoSelection 方法。转换后的结果存储在 transformedFormulas 中。
+    // 最后，该方法返回一个元组，包含了转换后的公式列表、独占集合和额外集合。
     val transformedFormulas =
       if (withSelection) formulas.map(f => (transformFormulaWithSelection(f._1), f._2, f._3, f._4, f._5))
       else formulas.map(f => (transformFormulaNoSelection(f._1), f._2, f._3, f._4, f._5))
