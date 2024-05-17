@@ -107,12 +107,31 @@ trait SREParser extends JavaTokenParsers {
   }
   def logicTerm: Parser[LogicTerm] = logicConstant | logicVariable | registerVariable | numericalConstant
   def logicPredicate: Parser[LogicPredicate] = """[A-Z]\w*""".r ^^ (x => LogicPredicate(x))
+//  def logicPredicateArgs: Parser[List[LogicTerm]] = "(" ~ repsep(logicTerm, ",") ~ ")" ^^ {
+//    case "(" ~ terms ~ ")" => terms
+//  }
   def logicPredicateArgs: Parser[List[LogicTerm]] = "(" ~ repsep(logicTerm, ",") ~ ")" ^^ {
-    case "(" ~ terms ~ ")" => terms
+    case "(" ~ terms ~ ")" =>
+      println(s"Parsed logic predicate arguments: $terms \n") // 打印解析结果
+      terms // 返回解析结果
   }
+
+//  单个predicate的解析器
+//  def logicAtomic: Parser[LogicAtomicSentence] = logicPredicate ~ opt(logicPredicateArgs) ^^ {
+//    case p ~ Some(t) => LogicAtomicSentence(p, t)
+//    case p ~ None => LogicAtomicSentence(p, List.empty[LogicTerm])
+//  }
+
   def logicAtomic: Parser[LogicAtomicSentence] = logicPredicate ~ opt(logicPredicateArgs) ^^ {
-    case p ~ Some(t) => LogicAtomicSentence(p, t)
-    case p ~ None => LogicAtomicSentence(p, List.empty[LogicTerm])
+    case p ~ Some(t) =>
+      println(s"Logic atomic sentence with predicate and arguments:")
+      println(s"Predicate: $p") // 打印 Predicate
+      println(s"Arguments: $t") // 打印 Arguments
+      LogicAtomicSentence(p, t)
+    case p ~ None =>
+      println(s"Logic atomic sentence with predicate and no arguments:")
+      println(s"Predicate: $p") // 打印 Predicate
+      LogicAtomicSentence(p, List.empty[LogicTerm])
   }
 
   // Logic operators
@@ -151,13 +170,33 @@ trait SREParser extends JavaTokenParsers {
     case "@(" ~ formulas ~ ")" => parseFormulas(RegularOperator.NEXT, formulas)
   }
 
-  def atomicFormulaPrefix: Parser[SRESentence] = logicSentencePrefix ~ opt(registerVariableDeclaration) ^^ {
-    case lsp ~ Some(rv) => SRESentence(lsp, rv)
-    case lsp ~ None => SRESentence(lsp)
-  }
-  def complexFormulaPrefix: Parser[SREOperator] = seqPrefix | orPrefix | iterPrefix | negationPrefix | anyPrefix | nextPrefix
-  def formulaPrefix: Parser[SREFormula] = atomicFormulaPrefix | complexFormulaPrefix
+//  原子公式的解析器
+//  def atomicFormulaPrefix: Parser[SRESentence] = logicSentencePrefix ~ opt(registerVariableDeclaration) ^^ {
+//    //    lsp 是解析器 logicSentencePrefix 的解析结果的捕获变量。
+//    //    解析器 logicSentencePrefix 解析出的结果是一个 LogicSentence 对象，代表逻辑句子，可能是一个逻辑原子句子或一个复杂的逻辑句子
+//    case lsp ~ Some(rv) => SRESentence(lsp, rv)
+//    case lsp ~ None => SRESentence(lsp)
+//  }
+def atomicFormulaPrefix: Parser[SRESentence] = logicSentencePrefix ~ opt(registerVariableDeclaration) ^^ {
+  // lsp 是解析器 logicSentencePrefix 的解析结果的捕获变量。
+  // 解析器 logicSentencePrefix 解析出的结果是一个 LogicSentence 对象，代表逻辑句子，可能是一个逻辑原子句子或一个复杂的逻辑句子
+  case lsp ~ Some(rv) =>
+    println("Logic sentence prefix with register variable declaration:")
+    println(lsp) // 打印 lsp
+    SRESentence(lsp, rv)
+  case lsp ~ None =>
+    println("Logic sentence prefix without register variable declaration:")
+    println(lsp) // 打印 lsp
+    SRESentence(lsp)
+}
 
+  // 组合公式解析器
+  def complexFormulaPrefix: Parser[SREOperator] = seqPrefix | orPrefix | iterPrefix | negationPrefix | anyPrefix | nextPrefix
+//  def formulaPrefix: Parser[SREFormula] = atomicFormulaPrefix | complexFormulaPrefix
+  def formulaPrefix: Parser[SREFormula] = atomicFormulaPrefix | complexFormulaPrefix ^^ { result =>
+    println(s"Parsed formula: $result") // 在这里打印 formulaPrefix 的结果
+    result
+  }
   def natInt: Parser[Int] = """\d+""".r ^^ (x => x.toInt)
   def order: Parser[Int] = "{order:" ~ natInt ~ "}" ^^ {
     case "{order:" ~ o ~ "}" => o

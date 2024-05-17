@@ -1,0 +1,5 @@
+package teporalinterval
+
+class AllenPairParser {
+
+}

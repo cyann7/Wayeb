@@ -1,4 +1,4 @@
-package teporalinterval
+package temporalinterval
 //
 ///**
 // * 将单个AllenPair 转为SRE可识别的pattern
