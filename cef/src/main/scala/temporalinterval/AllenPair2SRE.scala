@@ -2,7 +2,7 @@ package temporalinterval
 
 import temporalinterval.allenrelations._
 
-object AllenPairParser {
+object AllenPair2SRE {
   def parse(input: String): String = {
     val (relationType, strPredicateAWithArgs, strPredicateBWithArgs) = parseInput(input)
 

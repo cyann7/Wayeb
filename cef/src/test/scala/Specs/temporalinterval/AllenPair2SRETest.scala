@@ -4,18 +4,14 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatestplus.junit.JUnitRunner
-import org.junit.runner.RunWith
-import org.scalatestplus.junit.JUnitRunner
-import temporalinterval.allenrelations._
-import temporalinterval.AllenPairParser
 
 @RunWith(classOf[JUnitRunner])
-class AllenPairParserTest extends FlatSpec with Matchers {
+class AllenPair2SRETest extends FlatSpec with Matchers {
 
   "OVERLAP" should "correctly parse input and generate SRE pattern" in {
 
     val input = "OVERLAP(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(GT(speed,15.0),-LT(heading,95.0))),^(GT(speed,15.0),-LT(heading,95.0)),*(^(GT(speed,15.0)," +
       "LT(heading,95.0))),^(GT(speed,15.0),LT(heading,95.0)),*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0)))"
 
@@ -24,7 +20,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iOVERLAP" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iOVERLAP(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(LT(heading,95.0),-GT(speed,15.0))),^(LT(heading,95.0),-GT(speed,15.0)),*(^(LT(heading,95.0)," +
       "GT(speed,15.0))),^(LT(heading,95.0),GT(speed,15.0)),*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0)))"
 
@@ -33,7 +29,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "START" should "correctly parse input and generate SRE pattern" in {
 
     val input = "START(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-GT(speed,15.0),-LT(heading,95.0))),^(-GT(speed,15.0),-LT(heading,95.0)),*(^(GT(speed,15.0)," +
       "LT(heading,95.0))),^(GT(speed,15.0),LT(heading,95.0)),*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0)))"
 
@@ -44,7 +40,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "DURING" should "correctly parse input and generate SRE pattern" in {
 
     val input = "DURING(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0)),*(^(GT(speed,15.0)," +
       "LT(heading,95.0))),^(GT(speed,15.0),LT(heading,95.0)),*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0)))"
 
@@ -53,7 +49,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "FINISH" should "correctly parse input and generate SRE pattern" in {
 
     val input = "FINISH(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0)),*(^(GT(speed,15.0)," +
       "LT(heading,95.0))),^(GT(speed,15.0),LT(heading,95.0)),*(^(-GT(speed,15.0),-LT(heading,95.0))),^(-GT(speed,15.0),-LT(heading,95.0)))"
 
@@ -62,7 +58,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "BEFORE" should "correctly parse input and generate SRE pattern" in {
 
     val input = "BEFORE(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(" +
       "*( GT(speed,15.0)),GT(speed,15.0)," +
       "*(^(-GT(speed,15.0),-LT(heading,95.0))),^(-GT(speed,15.0),-LT(heading,95.0))," +
@@ -74,7 +70,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "MEET" should "correctly parse input and generate SRE pattern" in {
 
     val input = "MEET(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(" +
       "*(^(GT(speed,15.0),-LT(heading,95.0))),^(GT(speed,15.0),-LT(heading,95.0))," +
       "*(^(-GT(speed,15.0),LT(heading,95.0))),^(-GT(speed,15.0),LT(heading,95.0))" +
@@ -85,7 +81,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "EQUAL" should "correctly parse input and generate SRE pattern" in {
 
     val input = "EQUAL(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(" +
       "*(^(-GT(speed,15.0),-LT(heading,95.0))),^(-GT(speed,15.0),-LT(heading,95.0))," +
       "*(^(GT(speed,15.0),LT(heading,95.0))),^(GT(speed,15.0),LT(heading,95.0))," +
@@ -96,7 +92,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iSTART" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iSTART(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-LT(heading,95.0),-GT(speed,15.0))),^(-LT(heading,95.0),-GT(speed,15.0)),*(^(LT(heading,95.0)," +
       "GT(speed,15.0))),^(LT(heading,95.0),GT(speed,15.0)),*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0)))"
 
@@ -106,7 +102,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iDURING" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iDURING(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0)),*(^(LT(heading,95.0)," +
       "GT(speed,15.0))),^(LT(heading,95.0),GT(speed,15.0)),*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0)))"
 
@@ -115,7 +111,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iFINISH" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iFINISH(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0)),*(^(LT(heading,95.0)," +
       "GT(speed,15.0))),^(LT(heading,95.0),GT(speed,15.0)),*(^(-LT(heading,95.0),-GT(speed,15.0))),^(-LT(heading,95.0),-GT(speed,15.0)))"
 
@@ -124,7 +120,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iBEFORE" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iBEFORE(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(" +
       "*( LT(heading,95.0)),LT(heading,95.0)," +
       "*(^(-LT(heading,95.0),-GT(speed,15.0))),^(-LT(heading,95.0),-GT(speed,15.0))," +
@@ -136,7 +132,7 @@ class AllenPairParserTest extends FlatSpec with Matchers {
   "iMEET" should "correctly parse input and generate SRE pattern" in {
 
     val input = "iMEET(GT(speed,15.0),LT(heading,95.0))"
-    val srePattern = AllenPairParser.parse(input)
+    val srePattern = AllenPair2SRE.parse(input)
     val groundTruth=";(" +
       "*(^(LT(heading,95.0),-GT(speed,15.0))),^(LT(heading,95.0),-GT(speed,15.0))," +
       "*(^(-LT(heading,95.0),GT(speed,15.0))),^(-LT(heading,95.0),GT(speed,15.0))" +
