@@ -1,0 +1,1 @@
+;(*(^(GTE(accel,0.0050),-GTE(speed,63.0))),^(GTE(accel,0.0050),-GTE(speed,63.0)),*(^(GTE(accel,0.0050),GTE(speed,63.0))),^(GTE(accel,0.0050),GTE(speed,63.0)),*(^(-GTE(accel,0.0050),GTE(speed,63.0))),^(-GTE(accel,0.0050),GTE(speed,63.0))){partitionBy:vid}

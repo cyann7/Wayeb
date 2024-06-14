@@ -5,6 +5,8 @@ import java.io.FileReader
 import fsm.symbolic.sre
 import fsm.symbolic.sre.RegularOperator.RegularOperator
 
+import java.nio.file.Paths
+
 /**
   * Parser for compiling a list of patterns into formulas.
   *
@@ -273,9 +275,14 @@ trait SREParser extends JavaTokenParsers {
 
 object ParseSREFormula$ extends SREParser {
   def main(args: Array[String]): Unit = {
-    val home = System.getenv("WAYEB_HOME")
-    val fn = home + "/patterns/validation/pattern2.sre"
-    val reader = new FileReader(fn)
+    //CONFIG
+    val domain = "linearRoad"
+    val patternFileName= "during(accel,speed).sre"
+    val home = Paths.get(System.getenv("WAYEB_HOME"))
+    //DEFAULT CONFIG
+    val dataDir = home.resolve("data").resolve(domain)
+    val patternFile  = home.resolve("patterns").resolve(domain).resolve(patternFileName)
+    val reader = new FileReader(patternFile.toString())
     val parsed = parseAll(formulasList, reader)
     val f = parsed.get
     println(parsed)

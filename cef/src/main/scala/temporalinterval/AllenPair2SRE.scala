@@ -33,4 +33,13 @@ object AllenPair2SRE {
     val strPredicateBWithArgs = innerContent.split("\\),")(1)
     (relationType, strPredicateAWithArgs, strPredicateBWithArgs)
   }
+  def main(args: Array[String]): Unit = {
+//    "OVERLAP(GT(speed,15.0),LT(heading,95.0))"
+    val input = "OVERLAP(GTE(speed,63.0),GTE(accel,-0.00455))"
+    val result = parse(input)
+    println(s"Input: $input")
+    println(s"Result: $result")
+  }
 }
+
+

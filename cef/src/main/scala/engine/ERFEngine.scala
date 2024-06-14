@@ -154,6 +154,7 @@ class ERFEngine private (
     map(id => id -> mutable.Map.empty[Int,ForecasterRun]).toMap
 
   private var matchesNo = 0
+  private var lastMatchesNo = 0
   private var execTime: Long = 0
   private var lastCollectTime: Long = 0
   private var effectiveStreamSize: Int = 0
@@ -197,15 +198,23 @@ class ERFEngine private (
     * @param event The event to process.
     */
   private def processEvent(event: GenericEvent): Unit = {
+
     val t1 = System.nanoTime()
     val currentTimestamp = event.timestamp
     // All FSMs process the event.
-    //logger.debug("PROCESSING " + event.toString)
+
     val det = fsmList.map(f => processEvent(event, f))
     if (totalStreamSize > warmupStreamSize) {
       effectiveStreamSize += 1
       matchesNo += det.map(d => d._1).sum
-      //logger.debug("\n\tMatches thus far: " + matchesNo)
+
+      // log info when matched
+      if (lastMatchesNo!=matchesNo) {
+        logger.debug("\n\tMatches thus far: " + matchesNo)
+        logger.debug("PROCESSING " + event.toString)
+      }
+      lastMatchesNo = matchesNo
+
       val ts: Long = event.getValueOf("Timestamp").toString.toLong
       if (effectiveStreamSize == 1) firstTimestamp = ts
       lastTimestamp = ts

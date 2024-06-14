@@ -6,6 +6,7 @@ import stream.array._
 import stream.domain.homes.HomesLineParser
 import stream.domain.stock.StockLineParser
 import stream.domain.taxi.TaxiLineParser
+import stream.domain.linearRoad.linearRoadLineParser
 import stream.source._
 import ui.ConfigUtils
 import utils.MathUtils.sampleUniform
@@ -48,6 +49,7 @@ object StreamFactory {
       case "stock" => CSVStreamSource(fn, StockLineParser)
       case "homes" => CSVStreamSource(fn, HomesLineParser)
       case "taxi" => CSVStreamSource(fn, TaxiLineParser)
+      case "linearRoad" =>  if (isKafka) KafkaStreamSource(kafkaConf, linearRoadLineParser) else CSVStreamSource(fn, linearRoadLineParser)
       case _ => throw new IllegalArgumentException
     }
   }
